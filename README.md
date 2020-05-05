@@ -8,7 +8,7 @@ I searched for a way to use the maven-site plugin somehow in a blog like way. Th
 
 [source,sh]
 ----
-mvn clean install -Dmaven.test.skip=true
+mvn clean install
 ----
 
 ## Usage
