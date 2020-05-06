@@ -1,4 +1,4 @@
-:site-date: 25-11-20
+:site-date: 01-11-20
 :site-title: MacBook
 :site-author: sid
 :site-tags: PC-Krams
