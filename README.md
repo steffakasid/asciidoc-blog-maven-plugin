@@ -38,22 +38,15 @@ Add the following to your pom of a maven-site project:
 
 ## Structure of article definition YAML file
 
-The article definition YAML file must be placed under `src/site/article_definition.yml`. The name of the file can also be changed but remember to change your pom referencing the file as well. The structure is very simple and looks like the following for to blog posts:
+Blog post must be just placed below `src/site/` in a typicall maven project. The files can also be structured in folders. Every asciidoc file must define the following metadata:
 
 ```yaml
-- Date: "25-05-2018"
-  Title: "Updated website"
-  Author: "sid"
-  Tags: "PC-Krams, Site"
-  Content: "articles/20180525.adoc"
-- Date: "23-05-2018"
-  Title: "From wordpress to maven-site"
-  Author: "sid"
-  Tags: "PC-Krams, Site, Java, Maven"
-  Content: "articles/20180523.adoc"
+:site-date: 25-11-20
+:site-title: MacBook
+:site-author: sid
+:site-tags: PC-Krams
 ```
-
-The file will be processed sequential so first entry will be the first post visible on the page.
+The `site-date` will be used to bring all posts into order.
 
 ## Example Site
 
