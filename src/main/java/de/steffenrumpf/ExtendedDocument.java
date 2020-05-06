@@ -76,7 +76,9 @@ public class ExtendedDocument implements Comparable<ExtendedDocument> {
             
             LocalDate oDate = LocalDate.parse(oDateStr, formatter);
             LocalDate thisDate = LocalDate.parse(thisDateStr, formatter);
-            return thisDate.compareTo(oDate);
+            
+            // we'll invert the value so we get a descending order 
+            return thisDate.compareTo(oDate) * -1;
         }
         return 0;
     }
