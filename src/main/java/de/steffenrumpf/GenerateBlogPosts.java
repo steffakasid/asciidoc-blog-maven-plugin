@@ -56,11 +56,17 @@ public class GenerateBlogPosts extends AbstractMojo {
         try {
             File src = new File(project.getBasedir() + File.separator + "src" + File.separator + "site");
 
+            getLog().info("Gathering all relevant files...");
             List<ExtendedDocument> allDocuments = getAllFiles(src);
 
+            getLog().info("Sorting found files...");
             Collections.sort(allDocuments);
 
-            compile(allDocuments, outDir);
+            getLog().info("Partition all documents based on pageSize...");
+            Map<Integer, List<ExtendedDocument>> list = partition(allDocuments, pageSize);
+
+            getLog().info("Creating blog pages...");
+            compile(list, outDir);
 
         } catch (Exception e1) {
             getLog().error(e1);
@@ -74,7 +80,8 @@ public class GenerateBlogPosts extends AbstractMojo {
                 if (f.isDirectory()) {
                     fileList.addAll(getAllFiles(f));
                 } else {
-                    if(f.getName().endsWith(".adoc")) {
+                    if (f.getName().endsWith(".adoc")) {
+                        getLog().info("Found: " + f.getAbsolutePath());
                         Asciidoctor asciidoctor = JRubyAsciidoctor.create();
                         Map<String, Object> options = new HashMap<String, Object>();
 
@@ -87,27 +94,24 @@ public class GenerateBlogPosts extends AbstractMojo {
         return fileList;
     }
 
-    private void compile(List<ExtendedDocument> listOfDocuments, Path outDir) throws FileExistsException {
-        // TODO: Files must be sorted by site-date
-        for (ExtendedDocument doc: listOfDocuments) {
-            int index = listOfDocuments.indexOf(doc);
-            
+    private void compile(Map<Integer, List<ExtendedDocument>> list, Path outDir) throws FileExistsException {
+        list.forEach((key, listOfDocuments) -> {
             try (final FileWriterWithEncoding writer = new FileWriterWithEncoding(
-                    outDir.toAbsolutePath() + File.separator + outputFile + ((index > 0) ? index : "") + ".adoc",
+                    outDir.toAbsolutePath() + File.separator + outputFile + ((key > 0) ? key : "") + ".adoc",
                     "UTF-8")) {
-
                 final StringBuffer output = new StringBuffer();
-
                 if (pageSize > 0) {
-                    output.append(createPagingString(index, outputFile, listOfDocuments.size()));
+                    output.append(createPagingString(key, outputFile, listOfDocuments.size()));
                 }
-                output.append(createBlogPost(doc));
+                for (ExtendedDocument doc : listOfDocuments) {
 
+                    output.append(createBlogPost(doc));
+                }
                 writer.write(output.toString());
             } catch (Exception e) {
                 getLog().error(e);
             }
-        }
+        });
     }
 
     private String createBlogPost(ExtendedDocument post) {
@@ -124,7 +128,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         output.append("include::");
         output.append(getRelativePath(post.getFile()));
         output.append("[]\n\n'''\n\n");
-        
+
         return output.toString();
     }
 
@@ -150,6 +154,17 @@ public class GenerateBlogPosts extends AbstractMojo {
         returnSB.append("--\n");
 
         return returnSB.toString();
+    }
+
+    static Map<Integer, List<ExtendedDocument>> partition(List<ExtendedDocument> list, int pageSize) {
+        if (pageSize == 0) {
+            Map<Integer, List<ExtendedDocument>> returnV = new HashMap<Integer, List<ExtendedDocument>>();
+            returnV.put(pageSize, list);
+            return returnV;
+        } else {
+            return IntStream.iterate(0, i -> i + pageSize).limit((list.size() + pageSize - 1) / pageSize).boxed()
+                    .collect(toMap(i -> i / pageSize, i -> list.subList(i, min(i + pageSize, list.size()))));
+        }
     }
 
     public void prepareOutputDir(Path folder) {
