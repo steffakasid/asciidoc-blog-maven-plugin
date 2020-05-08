@@ -72,7 +72,7 @@ public class ExtendedDocument implements Comparable<ExtendedDocument> {
             String oDateStr = (String) oAttrs.get("site-date");
             String thisDateStr = (String) thisAttrs.get("site-date");
             
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy", Locale.GERMAN);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.GERMAN);
             
             LocalDate oDate = LocalDate.parse(oDateStr, formatter);
             LocalDate thisDate = LocalDate.parse(thisDateStr, formatter);
