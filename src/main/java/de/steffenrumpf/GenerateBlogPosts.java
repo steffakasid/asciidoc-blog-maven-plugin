@@ -178,6 +178,6 @@ public class GenerateBlogPosts extends AbstractMojo {
 
     public String getRelativePath(File file) {
         String path = file.getAbsolutePath();
-        return path.replace(project.getBasedir().getAbsolutePath(), ".");
+        return path.replace(outDir.toString(), ".");
     }
 }
