@@ -1,7 +1,6 @@
 :site-date: 26-11-2020
-:site-title: MacBook
-:site-author: sid
-:site-tags: PC-Krams
+
+= Some Other
 
 == Article 2
 some other test

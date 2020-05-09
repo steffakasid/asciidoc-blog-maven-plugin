@@ -109,7 +109,7 @@ public class GenerateBlogPosts extends AbstractMojo {
                 }
                 for (ExtendedDocument doc : listOfDocuments) {
 
-                    output.append(createBlogPost(doc));
+                    output.append(createBlogPost(doc.getFile()));
 
                     if(listOfDocuments.indexOf(doc) < listOfDocuments.size() - 1) {
                         output.append("\n'''\n\n");
@@ -122,19 +122,11 @@ public class GenerateBlogPosts extends AbstractMojo {
         });
     }
 
-    private String createBlogPost(ExtendedDocument post) {
-        Map<String, Object> attrs = post.getAttributes();
+    private String createBlogPost(File post) {
         StringBuffer output = new StringBuffer();
-        output.append("== ");
-        output.append(attrs.get("site-title"));
-        output.append("\n\n");
-        output.append("Posted on: ");
-        output.append(attrs.get("site-date"));
-        output.append(" by ");
-        output.append(attrs.get("site-author"));
-        output.append("\n\n");
+        output.append("\n");
         output.append("include::");
-        output.append(getRelativePath(post.getFile()));
+        output.append(getRelativePath(post));
         output.append("[]\n");
 
         return output.toString();

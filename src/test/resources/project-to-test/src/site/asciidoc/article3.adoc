@@ -1,7 +1,4 @@
 :site-date: 01-11-2020
-:site-title: MacBook
-:site-author: sid
-:site-tags: PC-Krams
 
 == Article 3
 More text
