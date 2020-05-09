@@ -106,6 +106,10 @@ public class GenerateBlogPosts extends AbstractMojo {
                 for (ExtendedDocument doc : listOfDocuments) {
 
                     output.append(createBlogPost(doc));
+
+                    if(listOfDocuments.indexOf(doc) < listOfDocuments.size() - 1) {
+                        output.append("\n'''\n\n");
+                    }
                 }
                 writer.write(output.toString());
             } catch (Exception e) {
@@ -127,7 +131,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         output.append("\n\n");
         output.append("include::");
         output.append(getRelativePath(post.getFile()));
-        output.append("[]\n\n'''\n\n");
+        output.append("[]\n");
 
         return output.toString();
     }
