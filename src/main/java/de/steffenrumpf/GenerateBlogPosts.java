@@ -101,7 +101,7 @@ public class GenerateBlogPosts extends AbstractMojo {
                     "UTF-8")) {
                 final StringBuffer output = new StringBuffer();
                 if (pageSize > 0) {
-                    output.append(createPagingString(key, outputFile, listOfDocuments.size()));
+                    output.append(createPagingString(key, outputFile, list.size()));
                 }
                 for (ExtendedDocument doc : listOfDocuments) {
 
