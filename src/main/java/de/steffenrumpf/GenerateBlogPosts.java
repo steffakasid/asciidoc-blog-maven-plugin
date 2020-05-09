@@ -47,25 +47,29 @@ public class GenerateBlogPosts extends AbstractMojo {
     @Parameter
     private int pageSize = 0;
 
+    private Path outDir = null;
+
     public void execute() throws MojoExecutionException {
-        Path outDir = Paths.get(project.getBasedir() + File.separator + "generated_src" + File.separator + "site"
+        outDir = Paths.get(project.getBasedir() + File.separator + "generated_src" + File.separator + "site"
                 + File.separator + "asciidoc");
 
         prepareOutputDir(outDir);
 
         try {
-            File src = new File(project.getBasedir() + File.separator + "src" + File.separator + "site");
+            File src = new File(project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                    + "asciidoc");
 
-            getLog().info("Gathering all relevant files...");
+            getLog().info("Looking for .adoc files in "+src);
             List<ExtendedDocument> allDocuments = getAllFiles(src);
 
-            getLog().info("Sorting found files...");
+            getLog().info("Sorting found files by side-date attribute.");
             Collections.sort(allDocuments);
 
-            getLog().info("Partition all documents based on pageSize...");
+            getLog().info("Partition all documents."+pageSize+" posts per Page.");
             Map<Integer, List<ExtendedDocument>> list = partition(allDocuments, pageSize);
+            getLog().info("Partitioning into "+list.size()+" pages.");
 
-            getLog().info("Creating blog pages...");
+            getLog().info("Creating blog pages.");
             compile(list, outDir);
 
         } catch (Exception e1) {
@@ -136,7 +140,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         return output.toString();
     }
 
-    private static String createPagingString(int currentPage, String outputFile, int countPages) {
+    private String createPagingString(int currentPage, String outputFile, int countPages) {
         StringBuffer returnSB = new StringBuffer();
 
         returnSB.append(":linkattrs: true\n\n");
