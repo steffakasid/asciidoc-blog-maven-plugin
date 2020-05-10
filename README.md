@@ -1,4 +1,4 @@
-# asciidoc-template-maven-plugin
+# asciidoc-blog-maven-plugin
 
 ## Introduction
 

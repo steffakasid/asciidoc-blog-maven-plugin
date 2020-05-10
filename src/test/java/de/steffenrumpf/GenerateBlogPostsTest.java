@@ -1,5 +1,6 @@
 package de.steffenrumpf;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -8,19 +9,16 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.project.MavenProject;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 public class GenerateBlogPostsTest {
-    private static GenerateBlogPosts myMojo = null;
+    private static GenerateBlogPosts cut = null;
 
     private static MavenProject proj = null;
 
@@ -38,8 +36,8 @@ public class GenerateBlogPostsTest {
     /**
      * Sets up the test fixture.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @Before
+    public void init() throws Exception {
         File pom = new File("target/test-classes/project-to-test/");
         assertNotNull(pom);
         assertTrue(pom.exists());
@@ -47,22 +45,21 @@ public class GenerateBlogPostsTest {
         proj = rule.readMavenProject(pom);
         assertNotNull(proj);
 
-        myMojo = (GenerateBlogPosts) rule.lookupConfiguredMojo(pom, "generate_blog_posts");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        cut = (GenerateBlogPosts) rule.lookupConfiguredMojo(pom, "generate_blog_posts");
+        assertNotNull(cut);
+        cut.setOutDir(Paths.get(proj.getBasedir().getAbsolutePath()));
     }
 
     /**
      * @throws Exception if any
      */
     @Test
-    public void testDefinitionsFileName() throws Exception {
-
-        String definitionFileName = (String) rule.getVariableValueFromObject(myMojo, "definitionFileName");
-
-        assertNotNull(definitionFileName);
-        // overwritten by project-to-test/pom.xml
-        assertTrue(definitionFileName.equals("article_definition_test.yml"));
+    public void testGetAllFiles() throws Exception {
+        
+        File folder = new File(proj.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+        + "asciidoc");
+        List<ExtendedDocument> allFiles = cut.getAllFiles(folder);
+        assertEquals(3, allFiles.size());
     }
 
     /**
@@ -72,10 +69,13 @@ public class GenerateBlogPostsTest {
      * @throws Exception if any
      */
     @Test
-    public void testOutputFile() throws Exception {
-        String outputFileName = (String) rule.getVariableValueFromObject(myMojo, "outputFile");
-        assertNotNull(outputFileName);
-        assertTrue(outputFileName.equals("indexTest"));
+    public void testCreateBlogPost() throws Exception {
+        File testFile = new File("testFile.txt");
+
+        String blogPost = cut.createBlogPost(testFile);
+
+        assertTrue(blogPost.contains("include::"+testFile.getAbsolutePath()+"[]"));
+
     }
 
     /**
@@ -84,19 +84,21 @@ public class GenerateBlogPostsTest {
      * @throws Exception if any
      */
     @Test
-    public void testPageSize() throws Exception {
-        int pageSize = (Integer) rule.getVariableValueFromObject(myMojo, "pageSize");
-        assertTrue(pageSize == 0);
+    public void testPagingString() throws Exception {
+        String pagingString = cut.createPagingString(0, 10);
+
+        assertTrue(pagingString.contains("link:indexTest.html[\"0\", role=active]"));
+        assertTrue(pagingString.contains("link:indexTest9.html[\"9\"]"));
     }
 
     /**
      * Test if the folder ${basedir}/generated_src/site/asciidoc was created
      */
     @Test
-    public void TestGeneratedFolder() {
-        Path generatedSrcPath = Paths.get(proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
-                + File.separator + "asciidoc");
-        assertTrue(generatedSrcPath.toString(), Files.exists(generatedSrcPath));
+    public void testGetRelativePath() {
+        
+        String relativePath = cut.getRelativePath(new File(Paths.get("target/test-classes/project-to-test/").toFile().getAbsolutePath()+"/somemore"));
+        assertEquals("./somemore", relativePath);
     }
 
     /**
@@ -105,22 +107,19 @@ public class GenerateBlogPostsTest {
      * created
      */
     @Test
-    public void TestGeneratedSingleFile() {
+    public void testGeneratedSingleFile() throws Exception {
+        cut.execute();
+
+        String outputFileName = (String) rule.getVariableValueFromObject(cut, "outputFile");
+        assertEquals("indexTest", outputFileName);
+
         Path generatedSrcPath = Paths.get(proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
                 + File.separator + "asciidoc" + File.separator + "indexTest.adoc");
-        assertTrue(generatedSrcPath.toString(), Files.exists(generatedSrcPath));
+        assertTrue(Files.exists(generatedSrcPath));
 
-        Path noIndexAdoc = Paths.get(proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
-                + File.separator + "asciidoc" + File.separator + "index.adoc");
-        assertFalse(noIndexAdoc.toString(), Files.exists(noIndexAdoc));
-
-        Path noIndex2Adoc = Paths.get(proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
-                + File.separator + "asciidoc" + File.separator + "index2.adoc");
-        assertFalse(noIndex2Adoc.toString(), Files.exists(noIndex2Adoc));
-
-        Path noIndexTest2Adoc = Paths.get(proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
-                + File.separator + "asciidoc" + File.separator + "indexText2.adoc");
-        assertFalse(noIndexTest2Adoc.toString(), Files.exists(noIndexTest2Adoc));
+        Path indexTest1Adoc = Paths.get(proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
+                + File.separator + "asciidoc" + File.separator + "indexTest1.adoc");
+        assertFalse(Files.exists(indexTest1Adoc));
     }
 
     /**
@@ -136,7 +135,7 @@ public class GenerateBlogPostsTest {
      * @throws Exception
      */
     @Test
-    public void TestMultipleFiles() throws Exception {
+    public void testMultipleFiles() throws Exception {
 
         File pom = new File("target/test-classes/project-to-test.1/");
         assertNotNull(pom);
@@ -145,9 +144,12 @@ public class GenerateBlogPostsTest {
         proj = rule.readMavenProject(pom);
         assertNotNull(proj);
 
-        GenerateBlogPosts myMojo2 = (GenerateBlogPosts) rule.lookupConfiguredMojo(pom, "generate_blog_posts");
-        assertNotNull(myMojo2);
-        myMojo2.execute();
+        cut = (GenerateBlogPosts) rule.lookupConfiguredMojo(pom, "generate_blog_posts");
+        assertNotNull(cut);
+        cut.execute();
+
+        int pageSize = (int) rule.getVariableValueFromObject(cut, "pageSize");
+        assertEquals(1, pageSize);
 
         String generateSrc = proj.getBasedir() + File.separator + "generated_src" + File.separator + "site"
                 + File.separator + "asciidoc";
@@ -174,26 +176,10 @@ public class GenerateBlogPostsTest {
 
         Files.createDirectories(folderToCheck);
 
-        myMojo.prepareOutputDir(folderToCheck);
+        cut.prepareOutputDir(folderToCheck);
 
         assertTrue(Files.exists(folderToCheck));
 
         Files.delete(folderToCheck);
     }
-
-    @Test
-    public void checkMap() {
-        List<Map<String, String>> list = new ArrayList<>();
-        Map<String, String> map1 = new HashMap<>();
-        Map<String, String> map2 = new HashMap<>();
-        Map<String, String> map3 = new HashMap<>();
-        map1.put("1", "1");
-        map2.put("2", "2");
-        map3.put("3", "3");
-
-        list.add(map1);
-        list.add(map2);
-        list.add(map3);
-    }
-
 }

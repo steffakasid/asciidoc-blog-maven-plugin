@@ -35,12 +35,6 @@ public class GenerateBlogPosts extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-    /**
-     * Location of the file.
-     */
-    @Parameter(defaultValue = "article_definition.yml", required = true)
-    private String definitionFileName;
-
     @Parameter(defaultValue = "index", required = true)
     private String outputFile;
 
@@ -50,8 +44,8 @@ public class GenerateBlogPosts extends AbstractMojo {
     private Path outDir = null;
 
     public void execute() throws MojoExecutionException {
-        outDir = Paths.get(project.getBasedir() + File.separator + "generated_src" + File.separator + "site"
-                + File.separator + "asciidoc");
+        setOutDir(Paths.get(project.getBasedir() + File.separator + "generated_src" + File.separator + "site"
+                + File.separator + "asciidoc"));
 
         prepareOutputDir(outDir);
 
@@ -77,7 +71,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         }
     }
 
-    private List<ExtendedDocument> getAllFiles(File folder) {
+    protected List<ExtendedDocument> getAllFiles(File folder) {
         List<ExtendedDocument> fileList = new ArrayList<ExtendedDocument>();
         if (folder.exists()) {
             for (File f : folder.listFiles()) {
@@ -105,7 +99,7 @@ public class GenerateBlogPosts extends AbstractMojo {
                     "UTF-8")) {
                 final StringBuffer output = new StringBuffer();
                 if (pageSize > 0) {
-                    output.append(createPagingString(key, outputFile, list.size()));
+                    output.append(createPagingString(key, list.size()));
                 }
                 for (ExtendedDocument doc : listOfDocuments) {
 
@@ -122,7 +116,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         });
     }
 
-    private String createBlogPost(File post) {
+    protected String createBlogPost(File post) {
         StringBuffer output = new StringBuffer();
         output.append("\n");
         output.append("include::");
@@ -132,7 +126,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         return output.toString();
     }
 
-    private String createPagingString(int currentPage, String outputFile, int countPages) {
+    protected String createPagingString(int currentPage, int countPages) {
         StringBuffer returnSB = new StringBuffer();
 
         returnSB.append(":linkattrs: true\n\n");
@@ -156,7 +150,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         return returnSB.toString();
     }
 
-    static Map<Integer, List<ExtendedDocument>> partition(List<ExtendedDocument> list, int pageSize) {
+    protected Map<Integer, List<ExtendedDocument>> partition(List<ExtendedDocument> list, int pageSize) {
         if (pageSize == 0) {
             Map<Integer, List<ExtendedDocument>> returnV = new HashMap<Integer, List<ExtendedDocument>>();
             returnV.put(pageSize, list);
@@ -167,7 +161,7 @@ public class GenerateBlogPosts extends AbstractMojo {
         }
     }
 
-    public void prepareOutputDir(Path folder) {
+    protected void prepareOutputDir(Path folder) {
         try {
             FileUtils.deleteQuietly(folder.toFile());
             Files.createDirectories(folder);
@@ -176,8 +170,16 @@ public class GenerateBlogPosts extends AbstractMojo {
         }
     }
 
-    public String getRelativePath(File file) {
+    protected String getRelativePath(File file) {
         String path = file.getAbsolutePath();
         return path.replace(outDir.toString(), ".");
+    }
+
+    public Path getOutDir() {
+        return outDir;
+    }
+
+    public void setOutDir(Path outDir) {
+        this.outDir = outDir;
     }
 }

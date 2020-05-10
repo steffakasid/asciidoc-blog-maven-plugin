@@ -1,4 +1,4 @@
-:blog-date: 26-11-2020
+:post-date: 26-11-2020
 
 = Some Other
 
