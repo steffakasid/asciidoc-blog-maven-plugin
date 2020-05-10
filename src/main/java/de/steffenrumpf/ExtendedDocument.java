@@ -70,7 +70,7 @@ public class ExtendedDocument implements Comparable<ExtendedDocument> {
             Map<String, Object> oAttrs = o.getAttributes();
             Map<String, Object> thisAttrs = getAttributes();
             String oDateStr = (String) oAttrs.get("post-date");
-            String thisDateStr = (String) thisAttrs.get("blog-date");
+            String thisDateStr = (String) thisAttrs.get("post-date");
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.GERMAN);
             
