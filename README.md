@@ -41,12 +41,9 @@ Add the following to your pom of a maven-site project:
 Blog post must be just placed below `src/site/` in a typicall maven project. The files can also be structured in folders. Every asciidoc file must define the following metadata:
 
 ```yaml
-:site-date: 25-11-20
-:site-title: MacBook
-:site-author: sid
-:site-tags: PC-Krams
+:blog-date: 25-11-20
 ```
-The `site-date` will be used to bring all posts into order.
+The `blog-date` will be used to bring all posts into order.
 
 ## Example Site
 

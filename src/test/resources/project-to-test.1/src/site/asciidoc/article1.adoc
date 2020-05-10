@@ -1,4 +1,4 @@
-:site-date: 25-11-2020
+:blog-date: 25-11-2020
 
 == Article 1
 Some Text
