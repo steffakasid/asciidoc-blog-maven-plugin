@@ -6,7 +6,7 @@
 
   <groupId>de.steffen-rumpf</groupId>
   <artifactId>asciidoc-blog-maven-plugin</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>asciidoc-blog-maven-plugin</name>
@@ -23,7 +23,7 @@
 
   <scm>
     <developerConnection>scm:git:ssh://git@github.com/steffakasid/asciidoc-blog-maven-plugin.git</developerConnection>
-    <tag>asciidoc-blog-maven-plugin-1.0</tag>
+    <tag>asciidoc-blog-maven-plugin-2.1</tag>
     <connection>scm:git:git://github.com/steffakasid/asciidoc-blog-maven-plugin.git</connection>
     <url>http://github.com/steffakasid/asciidoc-blog-maven-plugin/tree/master</url>
   </scm>
