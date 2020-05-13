@@ -4,13 +4,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.steffenrumpf</groupId>
+  <groupId>de.steffen-rumpf</groupId>
   <artifactId>asciidoc-blog-maven-plugin</artifactId>
-  <version>2.0-SNAPSHOT</version>
+  <version>1.0-Snapshot</version>
   <packaging>maven-plugin</packaging>
 
   <name>asciidoc-blog-maven-plugin</name>
-
+  <description>Maven plugin to generate asciidoc file from multiple files to get a blog from asciidoc. Those files finally can be rendered to html e.g. using the maven site plugin.</description>
   <url>http://www.steffen-rumpf.de</url>
 
   <licenses>
@@ -22,8 +22,9 @@
   </licenses>
 
   <scm>
+    <developerConnection>scm:git:ssh://git@github.com/steffakasid/asciidoc-blog-maven-plugin.git</developerConnection>
+    <tag>asciidoc-blog-maven-plugin-2.1</tag>
     <connection>scm:git:git://github.com/steffakasid/asciidoc-blog-maven-plugin.git</connection>
-    <developerConnection>scm:git:git://github.com/steffakasid/asciidoc-blog-maven-plugin.git</developerConnection>
     <url>http://github.com/steffakasid/asciidoc-blog-maven-plugin/tree/master</url>
   </scm>
 

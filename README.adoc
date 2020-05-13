@@ -8,7 +8,16 @@ I searched for a way to use the maven-site plugin somehow in a blog like way. Th
 
 [source,sh]
 ----
-mvn clean install
+$ mvn clean install
+----
+
+## Release
+
+[source,sh]
+----
+$ mvn release:clean
+$ mvn release:prepare
+$ mvn release:perform
 ----
 
 ## Usage
